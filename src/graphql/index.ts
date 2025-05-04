@@ -1,8 +1,9 @@
 import { ApolloServer } from "@apollo/server";
 import { User } from "./user";
 const typeDefs = `#graphql
+${User.typeDefs}
 type Query{
- hello:String
+ ${User.queries}
 }
 type Mutation {
   ${User.mutations}

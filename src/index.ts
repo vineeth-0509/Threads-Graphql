@@ -5,6 +5,7 @@ import cors from "cors";
 //import bodyParser from "body-parser";
 import express, { Express } from "express";
 import createGraphqlServer from "./graphql";
+import UserService from "./services/user";
 
 async function startServer() {
   const app: Express = express();
@@ -14,8 +15,20 @@ async function startServer() {
     "/graphql",
     cors<cors.CorsRequest>(),
     express.json(),
-    expressMiddleware(server),
-    (req, res) => {}
+    expressMiddleware(server, {
+      context:async ({req})=>{
+        //@ts-ignore
+        const token = req.headers['token']
+        try {
+          const user = UserService.decodeJWTToken(token as string);
+          return {user};
+        } catch (error) {
+          return {}
+          
+        }
+      }
+    }),
+    
   );
   app.get("/", (req, res) => {
     res.json({ message: "server is up and running" });
